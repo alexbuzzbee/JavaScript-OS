@@ -14,7 +14,7 @@ function Motherboard() {
     return port; // We know we added the device on this port, so we should return it.
   }
 
-  // Removes a device from the system. It will remain
+  // Removes a device from the system. Other references to the device can not and will not be removed.
   this.removeDevice = function(port) {
     delete this.devices[port]
   }
