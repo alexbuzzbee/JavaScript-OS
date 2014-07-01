@@ -6,7 +6,7 @@ function Motherboard() {
 
   // Returns the port of the attached device.
   this.attachDevice = function(device) {
-    port = this.devices.length // The length of an array always equals the next index.
+    var port = this.devices.length // The length of an array always equals the next index.
     this.devices[port] = device;
     if (!this.hasPrimaries[device.type]) { // If the the type of the device has no primary:
       this.changePrimary(port, device.type); // Set the primary for this type to the attached device.
@@ -27,7 +27,7 @@ function Motherboard() {
     } else if (!port) { // If no port is specified:
       return 2;
     }
-    device = this.devices[port]; // Get the device to return.
+    var device = this.devices[port]; // Get the device to return.
     if (device.type == type || type == "") { // If the device has the right type, or the requested type is '""':
       return device;
     } else {
