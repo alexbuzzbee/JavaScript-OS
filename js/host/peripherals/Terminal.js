@@ -30,6 +30,7 @@ function Terminal(elementID) {
     this.drawing.strokeStyle = "white";
     this.drawing.textColor = "white";
     this.drawing.fillColor = "white";
+    this.drawing.font = "13px monospace";
   };
 
   // Finds the terminal-relative location of a mouse click.
