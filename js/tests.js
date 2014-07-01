@@ -19,10 +19,10 @@ function hardwareTest() {
   }
 
   var motherboard = new Motherboard();
-  terminal = new Terminal("terminal");
+  var terminal = new Terminal("terminal");
   motherboard.attachDevice(terminal);
   delete terminal;
-  term = motherboard.getDeviceLink("terminal");
+  var term = motherboard.getDeviceLink("terminal");
   term.drawing.fillRect(10, 10, 98, 30);
   term.drawing.fillText("Hello, world!", 10, 53)
   term.addEventListener("rawTerminalClick", mouseClick);
