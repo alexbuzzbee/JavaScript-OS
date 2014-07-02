@@ -49,8 +49,8 @@ function Motherboard() {
   }
 }
 
-function System() {
+function System(terminalID) {
   this.motherboard = new Motherboard();
-  this.motherboard.attachDevice(new HardDrive());
-  this.motherboard.attachDevice(new Terminal());
+  this.motherboard.attachDevice(new Drive("maindrive"));
+  this.motherboard.attachDevice(new Terminal(terminalID));
 }
