@@ -1,16 +1,21 @@
 function Motherboard() {
   this.devices = [];
   this.systemMemory = [];
-  this.primaries = {};
-  this.hasPrimaries = {};
 
   // Returns the port of the attached device.
   this.attachDevice = function(device) {
     var port = this.devices.length // The length of an array always equals the next index.
     this.devices[port] = device;
-    if (!this.hasPrimaries[device.type]) { // If the the type of the device has no primary:
-      this.changePrimary(port, device.type); // Set the primary for this type to the attached device.
-    }
+    attachedEvent = new CustomEvent("deviceAttached",
+    {
+      detail: {
+        deviceType: device.type,
+        devicePort: port
+      },
+      bubbles: false,
+      cancelable: false
+    }); // Create an event, so that we can alert the kernel of the new device.
+    this.dispatchEvent(attachedEvent);
     return port; // We know we added the device on this port, so we should return it.
   }
 
@@ -19,12 +24,10 @@ function Motherboard() {
     delete this.devices[port]
   }
 
-  /* Returns 1 if device on port is not the right type, 2 if there is no primary for the type.
+  /* Returns 1 if device on port is not the right type, 2 if no port is specified.
    Pass '""' to get any device type. */
   this.getDeviceLink = function(type, port) {
-    if (!port && this.hasPrimaries[type] == true) { // If no port is specifed, and there is an appropriate primary device:
-      var port = this.primaries[type]; // Find the port for the primary of the specified type.
-    } else if (!port) { // If no port is specified:
+    if (port == null) { // If no port is specified:
       return 2;
     }
     var device = this.devices[port]; // Get the device to return.
@@ -39,15 +42,18 @@ function Motherboard() {
     return this.systemMemory[address];
   }
 
-  this.setMemoryPage = function(address, data) {
-    this.systemMemory[address] = data;
+  this.newMemoryPage = function() {
+    var address = this.systemMemory.length;
+    this.systemMemory[address] = null;
+    return address;
   }
 
-  this.changePrimary = function(port, type) {
-    this.primaries[type] = port;
-    this.hasPrimaries[type] = true;
+  this.deleteMemoryPage = function(address) {
+    delete this.systemMemory[address];
   }
 }
+
+Motherboard.prototype = new Device()
 
 function System(terminalID) {
   this.motherboard = new Motherboard();

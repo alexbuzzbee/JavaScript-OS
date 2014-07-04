@@ -1,10 +1,10 @@
 function hardwareTest() {
   function mouseClick(e) {
-    console.log("Mouse click at (" + e.detail.x + ", " + e.detail.y + ").")
+    console.log("Mouse click at (" + e.detail.x + ", " + e.detail.y + ").");
   }
 
   function keypress(e) {
-    var message = "Key " + e.detail.charPressed + " pressed"
+    var message = "Key " + e.detail.charPressed + " pressed";
     if (e.detail.ctrl) {
       message += " with control key";
     }
@@ -25,8 +25,8 @@ function hardwareTest() {
   delete terminal;
   motherboard.attachDevice(drive);
   delete drive;
-  var term = motherboard.getDeviceLink("terminal");
-  var drv = motherboard.getDeviceLink("drive");
+  var term = motherboard.getDeviceLink("terminal", 0);
+  var drv = motherboard.getDeviceLink("drive", 1);
   term.drawing.fillRect(10, 10, 98, 30);
   term.drawing.fillText("Hello, world!", 10, 53)
   term.addEventListener("rawTerminalClick", mouseClick);
@@ -38,4 +38,20 @@ function hardwareTest() {
   drv.deleteInode(inode);
   delete term;
   return motherboard;
+}
+
+function softwareTest() {
+  var motherboard = new Motherboard();
+  var kernel = new Kernel(motherboard);
+  var module = {
+    name: "testModule",
+    onLoad: function() {},
+    onUnload: function() {},
+    doSomething: function() {
+      console.log("Hello, world from the kernel module!");
+    }
+  };
+  kernel.loadModule(module);
+  kernel.getModule("testModule").doSomething();
+  return kernel;
 }
