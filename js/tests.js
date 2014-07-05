@@ -43,15 +43,20 @@ function hardwareTest() {
 function softwareTest() {
   var motherboard = new Motherboard();
   var kernel = new Kernel(motherboard);
-  var module = {
-    name: "testModule",
-    onLoad: function() {},
-    onUnload: function() {},
-    doSomething: function() {
-      console.log("Hello, world from the kernel module!");
-    }
-  };
-  kernel.loadModule(module);
-  kernel.getModule("testModule").doSomething();
+  kernel.addEventListener("kernelBooted", function(e) {
+    var module = {
+      name: "testModule",
+      onLoad: function(kern) {
+        this.kernel = kern;
+      },
+      onUnload: function() {},
+      doSomething: function() {
+        console.log("Hello, world from the kernel module! Kernel was booted at: " + this.kernel.timeBooted);
+      }
+    };
+    kernel.loadModule(module, e.detail.permKey);
+    kernel.getModule("testModule").doSomething();
+  });
+  kernel.onBoot();
   return kernel;
 }

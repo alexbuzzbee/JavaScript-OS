@@ -53,7 +53,7 @@ function Motherboard() {
   }
 }
 
-Motherboard.prototype = new Device()
+Motherboard.prototype = new EventTargeti()
 
 function System(terminalID) {
   this.motherboard = new Motherboard();
