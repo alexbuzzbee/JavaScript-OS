@@ -1,4 +1,5 @@
 function Motherboard() {
+  var deviceEvents = false;
   this.devices = [];
   this.systemMemory = [];
 
@@ -6,16 +7,17 @@ function Motherboard() {
   this.attachDevice = function(device) {
     var port = this.devices.length // The length of an array always equals the next index.
     this.devices[port] = device;
-    attachedEvent = new CustomEvent("deviceAttached",
-    {
-      detail: {
-        deviceType: device.type,
-        devicePort: port
-      },
-      bubbles: false,
-      cancelable: false
-    }); // Create an event, so that we can alert the kernel of the new device.
-    this.dispatchEvent(attachedEvent);
+    if (deviceEvents) {
+      attachedEvent = new CustomEvent("deviceAttached", {
+        detail: {
+          deviceType: device.type,
+          devicePort: port
+        },
+        bubbles: false,
+        cancelable: false
+      }); // Create an event, so that we can alert the software of the new device.
+      this.dispatchEvent(attachedEvent);
+    }
     return port; // We know we added the device on this port, so we should return it.
   }
 
@@ -35,6 +37,22 @@ function Motherboard() {
       return device;
     } else {
       return 1;
+    }
+  }
+
+  this.readyForDeviceEvents = function() { // Alerts the motherboard to start dispatching deviceAttached events.
+    deviceEvents = true;
+    for (port = 0; port < this.devices.length; port++) {
+      device = this.devices[port];
+      attachedEvent = new CustomEvent("deviceAttached", {
+        detail: {
+          deviceType: device.type,
+          devicePort: port
+        },
+        bubbles: false,
+        cancelable: false
+      }); // Create an event, so that we can alert the software of the device.
+      this.dispatchEvent(attachedEvent);
     }
   }
 

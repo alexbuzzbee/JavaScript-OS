@@ -51,7 +51,7 @@ function softwareTest() {
       },
       onUnload: function() {},
       doSomething: function() {
-        console.log("Hello, world from the kernel module! Kernel was booted at: " + this.kernel.timeBooted);
+        console.log("Hello, world from the kernel module! Kernel was booted at: " + this.kernel.timeBooted + ".");
       }
     };
     kernel.loadModule(module, e.detail.permKey);

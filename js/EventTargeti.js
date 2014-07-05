@@ -24,8 +24,10 @@ function EventTargeti() { // Partial implementation of EventTarget.
         for (listener of _listeners[listenerType]) {
           listener(evt);
         }
+        delete listener;
         break;
       }
     }
+    delete listenerType;
   };
 }
