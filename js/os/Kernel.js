@@ -7,74 +7,80 @@ function Kernel(motherboard) {
   this.primaries = {};
   this.syscalls = {};
 
-  this.loadModule = function(module, key) {
-    if (key == permKey) {
-      this.modules[module.name] = module;
-      this.modules[module.name].onLoad(this, permKey);
-    }
+  this.__getKey__ = function() {
+    return permKey;
   }
+}
 
-  this.unloadModule = function(name, key) {
-    if (key == permKey) {
+Kernel.prototype = {
+  loadModule: function(module, key) {
+    if (key == this.__getKey__()) {
+      this.modules[module.name] = module;
+      this.modules[module.name].onLoad(this, this.__getKey__());
+    }
+  },
+
+  unloadModule: function(name, key) {
+    if (key == this.__getKey__()) {
       this.modules[name].onUnload();
       delete this.modules[name];
     }
-  }
+  },
 
-  this.getModule = function(name) {
+  getModule: function(name) {
     return this.modules[name];
-  }
+  },
 
-  this.loadDriver = function(driver, device, key) {
-    if (key == permKey) {
+  loadDriver: function(driver, device, key) {
+    if (key == this.__getKey__()) {
       this.drivers.push(driver);
-      this.drivers[this.drivers.length - 1].onLoad(device);
+      this.drivers[this.drivers.length - 1].onLoad(device, this, this.__getKey__());
       if (this.hasPrimary[driver.type] != true) {
         this.primaries[driver.type];
       }
       return this.drivers.length - 1;
     }
-  }
+  },
 
-  this.unloadDriver = function(index, key) {
-    if (key == permKey) {
+  unloadDriver: function(index, key) {
+    if (key == this.__getKey__()) {
       this.drivers[index].onUnload();
       delete this.drivers[index];
     }
-  }
+  },
 
-  this.getDriver = function(deviceType, index) {
+  getDriver: function(deviceType, index) {
     if (this.primaries[deviceType] && index == null) {
       return this.drivers[this.primaries[deviceType]];
     } else {
       return this.drivers[index];
     }
-  }
+  },
 
-  this.changePrimary = function(index, type, key) {
-    if (key == permKey) {
+  changePrimary: function(index, type, key) {
+    if (key == this.__getKey__()) {
       this.primaries[type] = index;
     }
-  }
+  },
 
-  this.syscall = function(name, data) {
-    call = this.syscalls[name];
-    call(data);
-  }
-
-  this.addSyscall = function(name, func, key) {
-    if (key == permKey) {
-      this.syscalls[name] = func.bind(me);
+  addSyscall: function(name, func, key) {
+    if (key == this.__getKey__()) {
+      this.syscalls[name] = func.bind(this);
     }
-  }
+  },
 
-  this.removeSyscall = function(name, key) {
-    if (key == permKey) {
+  removeSyscall: function(name, key) {
+    if (key == this.__getKey__()) {
       delete this.syscalls[name];
     }
-  }
+  },
 
-  this.onBoot = function() {
+  syscall: function(name, data) {
+    call = this.syscalls[name];
+    call(data);
+  },
+
+  onBoot: function() {
     this.timeBooted = new Date()
     //this.loadModule(new KernelCore());
     this.motherboard.readyForDeviceEvents();
@@ -82,13 +88,13 @@ function Kernel(motherboard) {
       detail: {
         time: this.timeBooted,
         instance: this,
-        permKey: permKey
+        permKey: this.__getKey__()
       },
       bubbles: false,
       cancelable: false
     });
     this.dispatchEvent(bootEvent);
-  }
-}
+  },
 
-Kernel.prototype = new EventTargeti();
+  __proto__: new EventTargeti()
+};

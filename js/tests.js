@@ -52,13 +52,16 @@ function softwareTest() {
         this.key = permKey;
         this.kernel.addSyscall("doSomething", this.doSomething, this.key);
       },
-      onUnload: function() {},
+      onUnload: function() {
+        this.kernel.removeSyscall("doSomething", this.key)
+      },
       doSomething: function() {
         console.log("Hello, world from the kernel module! Kernel was booted at: " + this.timeBooted + ".");
       }
     };
     kernel.loadModule(module, e.detail.permKey);
     kernel.syscall("doSomething", null);
+    kernel.unloadModule("testModule", e.detail.permKey)
   });
   kernel.onBoot();
   return kernel;
