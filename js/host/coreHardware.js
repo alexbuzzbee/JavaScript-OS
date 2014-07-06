@@ -42,7 +42,7 @@ function Motherboard() {
 
   this.readyForDeviceEvents = function() { // Alerts the motherboard to start dispatching deviceAttached events.
     deviceEvents = true;
-    for (port = 0; port < this.devices.length; port++) {
+    for (var port = 0; port < this.devices.length; port++) {
       device = this.devices[port];
       attachedEvent = new CustomEvent("deviceAttached", {
         detail: {
@@ -60,9 +60,9 @@ function Motherboard() {
     return this.systemMemory[address];
   }
 
-  this.newMemoryPage = function() {
+  this.newMemoryPage = function(data) {
     var address = this.systemMemory.length;
-    this.systemMemory[address] = null;
+    this.systemMemory[address] = data;
     return address;
   }
 

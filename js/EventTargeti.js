@@ -19,15 +19,13 @@ function EventTargeti() { // Partial implementation of EventTarget.
   };
 
   this.dispatchEvent = function(evt) {
-    for (listenerType in _listeners) {
+    for (var listenerType in _listeners) {
       if (listenerType == evt.type) {
-        for (listener of _listeners[listenerType]) {
+        for (var listener of _listeners[listenerType]) {
           listener(evt);
         }
-        delete listener;
         break;
       }
     }
-    delete listenerType;
   };
 }

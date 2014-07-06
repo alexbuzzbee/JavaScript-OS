@@ -64,7 +64,7 @@ function Kernel(motherboard) {
 
   this.addSyscall = function(name, func, key) {
     if (key == permKey) {
-      this.syscalls[name] = func;
+      this.syscalls[name] = func.bind(me);
     }
   }
 
@@ -77,6 +77,7 @@ function Kernel(motherboard) {
   this.onBoot = function() {
     this.timeBooted = new Date()
     //this.loadModule(new KernelCore());
+    this.motherboard.readyForDeviceEvents();
     var bootEvent = new CustomEvent("kernelBooted", {
       detail: {
         time: this.timeBooted,
