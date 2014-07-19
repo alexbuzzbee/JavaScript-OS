@@ -47,22 +47,21 @@ function softwareTest() {
   kernel.addEventListener("kernelBooted", function(e) {
     var module = {
       name: "testModule",
-      onLoad: function(kern, permKey) {
+      onLoad: function(kern) {
         this.kernel = kern;
-        this.key = permKey;
-        this.kernel.addSyscall("doSomething", this.doSomething, this.key);
+        this.kernel.addSyscall("doSomething", this.doSomething);
       },
       onUnload: function() {
-        this.kernel.removeSyscall("doSomething", this.key)
+        this.kernel.removeSyscall("doSomething")
       },
       doSomething: function() {
         console.log("Hello, world from the kernel module! Kernel was booted at: " + this.timeBooted + ".");
       }
     };
     kernel.loadModule(module, e.detail.permKey);
-    kernel.syscall("doSomething", null);
+    kernel.internalSyscall("doSomething", null);
     kernel.unloadModule("testModule", e.detail.permKey)
   });
-  kernel.onBoot();
+  kernel.boot();
   return kernel;
 }
